@@ -1,5 +1,3 @@
-# VBA-challenge
-Module 2 Challenge
 Sub CalculateStockInfo()
 
     ' Loop through each worksheet in the workbook
@@ -44,3 +42,33 @@ Sub CalculateStockInfo()
                 outputRow = outputRow + 1
             End If
         Next i
+
+        ' Set headers for greatest values
+        ws.Range("M2").Value = "Greatest % Increase"
+        ws.Range("M3").Value = "Greatest % Decrease"
+        ws.Range("M4").Value = "Greatest Total Volume"
+        ws.Range("N1").Value = "Ticker"
+        ws.Range("O1").Value = "Value"
+
+        ' Calculate greatest values
+        ws.Range("N2").Value = ws.Cells(ws.Range("J2:J" & outputRow - 1).Find(Application.WorksheetFunction.Max(ws.Range("J2:J" & outputRow - 1)), , , , , xlNext, False, , False).Row, 8).Value
+        ws.Range("O2").Value = Application.WorksheetFunction.Max(ws.Range("J2:J" & outputRow - 1))
+        ws.Range("N3").Value = ws.Cells(ws.Range("J2:J" & outputRow - 1).Find(Application.WorksheetFunction.Min(ws.Range("J2:J" & outputRow - 1)), , , , , xlNext, False, , False).Row, 8).Value
+        ws.Range("O3").Value = Application.WorksheetFunction.Min(ws.Range("J2:J" & outputRow - 1))
+        ws.Range("N4").Value = ws.Cells(ws.Range("K2:K" & outputRow - 1).Find(Application.WorksheetFunction.Max(ws.Range("K2:K" & outputRow - 1)), , , , , xlNext, False, , False).Row, 8).Value
+        ws.Range("O4").Value = Application.WorksheetFunction.Max(ws.Range("K2:K" & outputRow - 1))
+
+        ' Apply conditional formatting to yearly change column
+        With ws.Range("I2:I" & outputRow - 1).FormatConditions
+            .Delete
+            ' Add condition for positive change
+            .Add Type:=xlCellValue, Operator:=xlGreater, Formula1:="=0"
+            .Item(.Count).Interior.Color = RGB(0, 255, 0) ' Green for positive change
+            ' Add condition for negative change
+            .Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
+            .Item(.Count).Interior.Color = RGB(255, 0, 0) ' Red for negative change
+        End With
+
+    Next ws
+
+End Sub
